@@ -1,0 +1,57 @@
+{
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.6304037054423114,
+      "train_dice": 0.6245878007234508,
+      "val_dice": 0.7175330050295605,
+      "epoch_time_sec": 232.22306752204895
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.4835857467103637,
+      "train_dice": 0.6490873314605458,
+      "val_dice": 0.6728717560469866,
+      "epoch_time_sec": 186.55106163024902
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.4105474032063521,
+      "train_dice": 0.6627367878449869,
+      "val_dice": 0.7380466628954138,
+      "epoch_time_sec": 191.04573345184326
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.21221682286585344,
+      "train_dice": 0.7408534944252464,
+      "val_dice": 0.773657228818586,
+      "epoch_time_sec": 185.16365814208984
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.12392242343284485,
+      "train_dice": 0.8008879012993924,
+      "val_dice": 0.8040015597102541,
+      "epoch_time_sec": 182.40393042564392
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.11182326411808763,
+      "train_dice": 0.8110101011959868,
+      "val_dice": 0.8184236797601965,
+      "epoch_time_sec": 205.39124727249146
+    }
+  ],
+  "best_val_dice": 0.8184236797601965,
+  "total_minutes": 19.716048641999564,
+  "args": {
+    "data_root": "c:\\Users\\nauma\\Downloads\\ISLES 2022 (MODIFIED)\\data_processed",
+    "ckpt_dir": "c:\\Users\\nauma\\Downloads\\ISLES 2022 (MODIFIED)\\checkpoints",
+    "epochs": 6,
+    "batch_size": 32,
+    "lr": 0.001,
+    "num_workers": 0,
+    "base_channels": 16
+  }
+}

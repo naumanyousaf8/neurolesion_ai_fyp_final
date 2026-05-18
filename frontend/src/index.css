@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  * { box-sizing: border-box; }
+}
+
+@layer components {
+  .container-narrow { @apply max-w-6xl mx-auto px-6 lg:px-8; }
+  .container-wide { @apply max-w-7xl mx-auto px-6 lg:px-8; }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-xl bg-brand-600 px-5 py-3 text-sm font-semibold
+      text-white shadow-card transition hover:bg-brand-700 hover:-translate-y-0.5
+      active:translate-y-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500
+      focus-visible:ring-offset-2;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold
+      text-clinical-ink shadow-card border border-clinical-border transition
+      hover:bg-clinical-bg hover:-translate-y-0.5 active:translate-y-0;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium
+      text-clinical-muted hover:text-clinical-ink transition;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl border border-clinical-border shadow-card p-6 transition
+      animate-fade-up;
+  }
+  .card-hover { @apply hover:shadow-cardLg hover:-translate-y-0.5; }
+
+  .pill {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium
+      border;
+  }
+  .pill-brand { @apply bg-brand-50 text-brand-700 border-brand-100; }
+  .pill-amber { @apply bg-amber-50 text-amber-800 border-amber-200; }
+  .pill-rose  { @apply bg-rose-50 text-rose-700 border-rose-200; }
+
+  .section-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-widest text-brand-600;
+  }
+  .h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight
+      text-clinical-ink leading-[1.1];
+  }
+  .h2 {
+    @apply text-3xl md:text-4xl font-bold tracking-tight text-clinical-ink leading-tight;
+  }
+  .h3 {
+    @apply text-xl md:text-2xl font-bold tracking-tight text-clinical-ink leading-snug;
+  }
+  .lead { @apply text-lg text-clinical-muted leading-relaxed; }
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-grid-faint {
+  background-image: radial-gradient(circle at 1px 1px, rgba(15, 118, 110, 0.10) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.bg-hero-gradient {
+  background:
+    radial-gradient(at 80% 0%, rgba(20, 184, 166, 0.18) 0px, transparent 50%),
+    radial-gradient(at 0% 30%, rgba(15, 118, 110, 0.10) 0px, transparent 40%),
+    linear-gradient(180deg, #ffffff 0%, #f0fdfa 100%);
+}
+
+.report-panel {
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+  color: #e2e8f0;
+  font-family: "Menlo", "Consolas", "Courier New", monospace;
+  font-size: 12.5px;
+  line-height: 1.65;
+  padding: 22px 26px;
+  border-radius: 14px;
+  white-space: pre-wrap;
+  border: 1px solid #1e293b;
+  overflow-x: auto;
+}
+
+.report-panel::-webkit-scrollbar { height: 8px; }
+.report-panel::-webkit-scrollbar-track { background: transparent; }
+.report-panel::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }

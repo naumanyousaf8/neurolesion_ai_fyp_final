@@ -1,0 +1,9 @@
+{
+  "checkpoint": "c:\\Users\\nauma\\Downloads\\ISLES 2022 (MODIFIED)\\checkpoints\\best.pt",
+  "n_test_slices": 1330,
+  "threshold": 0.5,
+  "slice_mean_dice": 0.7668316708434195,
+  "voxel_dice": 0.46839316201414605,
+  "voxel_precision": 0.8366732673267326,
+  "voxel_recall": 0.32524555839517194
+}
