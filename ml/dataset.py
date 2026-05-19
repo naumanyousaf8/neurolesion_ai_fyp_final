@@ -1,12 +1,21 @@
-"""PyTorch ``Dataset`` for ISLES 2D slices with on-the-fly augmentation.
-
-The preprocessing script (:mod:`ml.preprocess`) writes each axial slice
-that contains brain tissue to its own ``.npz`` file containing two
-arrays: ``image`` (float32, z-scored, 64x64) and ``mask`` (uint8, 0/1).
-This module is the thin training-time adapter that yields ``(C, H, W)``
-PyTorch tensors and applies augmentation.
 """
+PyTorch Dataset for loading preprocessed ISLES MRI slices.
+
+This file:
+- loads .npz MRI slice files
+- converts them into PyTorch tensors
+- applies on-the-fly augmentation during training
+
+Each .npz file contains:
+- image → normalized MRI slice
+- mask → binary lesion segmentation mask
+"""
+
 from __future__ import annotations
+
+# ==========================================
+# Required Libraries
+# ==========================================
 
 import random
 from pathlib import Path
@@ -16,62 +25,146 @@ import torch
 from torch.utils.data import Dataset
 
 
+# ==========================================
+# Custom PyTorch Dataset
+# ==========================================
+
 class IslesSliceDataset(Dataset):
-    """Loads 2D ``(image, mask)`` ``.npz`` slice pairs and applies optional augmentation.
+    """
+    Dataset class for loading MRI slice + mask pairs.
 
-    On-the-fly augmentation (when ``train=True``):
-        * random horizontal flip
-        * random vertical flip
-        * random 0/90/180/270-degree rotation
-        * additive Gaussian noise on the image
-        * random intensity scaling
+    Supports:
+    - training augmentation
+    - validation loading
+    - test loading
 
-    Parameters
-    ----------
-    root:
-        Folder of ``.npz`` files (one per slice). Typically one of
-        ``data_processed/{train,val,test}``.
-    train:
-        If ``True``, augmentation is applied. Validation / test loaders
-        should pass ``False`` for deterministic evaluation.
+    Input:
+    .npz files generated from preprocess.py
     """
 
     def __init__(self, root: str | Path, train: bool = False):
+
+        # Dataset directory
         self.root = Path(root)
+
+        # Load all .npz slice files
         self.files = sorted(self.root.glob("*.npz"))
+
+        # Training mode flag
         self.train = train
+
+        # Ensure dataset exists
         if not self.files:
-            raise RuntimeError(f"No .npz slice files found in {self.root}")
+            raise RuntimeError(
+                f"No .npz slice files found in {self.root}"
+            )
+
+    # ==========================================
+    # Dataset Length
+    # ==========================================
 
     def __len__(self) -> int:
+
+        # Return total number of slices
         return len(self.files)
 
-    def _augment(self, img: np.ndarray, msk: np.ndarray):
-        """Apply the random augmentation pipeline to a single ``(img, msk)`` pair.
+    # ==========================================
+    # Data Augmentation Pipeline
+    # ==========================================
 
-        Geometric transforms are applied identically to both arrays, while
-        intensity-only perturbations affect the image alone.
+    def _augment(
+        self,
+        img: np.ndarray,
+        msk: np.ndarray
+    ):
         """
+        Apply random augmentation.
+
+        Geometric transforms:
+        - applied to BOTH image and mask
+
+        Intensity transforms:
+        - applied ONLY to image
+        """
+
+        # Random horizontal flip
         if random.random() < 0.5:
-            img, msk = np.fliplr(img).copy(), np.fliplr(msk).copy()
+
+            img, msk = (
+                np.fliplr(img).copy(),
+                np.fliplr(msk).copy()
+            )
+
+        # Random vertical flip
         if random.random() < 0.3:
-            img, msk = np.flipud(img).copy(), np.flipud(msk).copy()
+
+            img, msk = (
+                np.flipud(img).copy(),
+                np.flipud(msk).copy()
+            )
+
+        # Random rotation (0°, 90°, 180°, 270°)
         k = random.choice([0, 1, 2, 3])
+
         if k:
-            img, msk = np.rot90(img, k).copy(), np.rot90(msk, k).copy()
+
+            img, msk = (
+                np.rot90(img, k).copy(),
+                np.rot90(msk, k).copy()
+            )
+
+        # Add Gaussian noise
         if random.random() < 0.4:
-            img = img + np.random.normal(0, 0.05, img.shape).astype(np.float32)
+
+            img = img + np.random.normal(
+                0,
+                0.05,
+                img.shape
+            ).astype(np.float32)
+
+        # Random intensity scaling
         if random.random() < 0.4:
+
             img = img * np.random.uniform(0.9, 1.1)
+
         return img, msk
 
+    # ==========================================
+    # Load One Dataset Sample
+    # ==========================================
+
     def __getitem__(self, idx: int):
+        """
+        Load one MRI slice + mask pair.
+
+        Returns:
+        - image tensor
+        - mask tensor
+
+        Shape:
+        (1, H, W)
+        """
+
+        # Load .npz file
         data = np.load(self.files[idx])
+
+        # Extract MRI image
         img = data["image"].astype(np.float32)
+
+        # Extract lesion mask
         msk = data["mask"].astype(np.float32)
+
+        # Apply augmentation during training
         if self.train:
+
             img, msk = self._augment(img, msk)
+
+        # Convert numpy arrays → PyTorch tensors
         return (
-            torch.from_numpy(img).unsqueeze(0),  # (1, H, W)
-            torch.from_numpy(msk).unsqueeze(0),  # (1, H, W)
+
+            # MRI image tensor
+            torch.from_numpy(img).unsqueeze(0),
+
+            # Segmentation mask tensor
+            torch.from_numpy(msk).unsqueeze(0),
         )

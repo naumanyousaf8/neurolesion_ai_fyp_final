@@ -1,19 +1,23 @@
-"""Convert raw ISLES NIfTI volumes into normalised 64x64 ``.npz`` slice files.
-
-Pipeline per case:
-    1. Load the DWI volume + binary mask.
-    2. Z-score normalise intensities (using non-zero brain voxels only).
-    3. Iterate over axial slices; keep only slices containing brain tissue.
-    4. Resize image (bilinear) and mask (nearest) to 64x64 with torch.
-    5. Save each ``(image, mask)`` pair as a single ``.npz`` slice file.
-
-Cases are split patient-disjoint into train / val / test = 80 / 10 / 10
-to prevent any data leakage at the patient level.
-
-Run with::
-
-    python -m scripts.run_preprocessing
 """
+Convert raw ISLES NIfTI MRI volumes into normalized 64x64 .npz slice files.
+
+Pipeline:
+1. Load MRI volume + lesion mask
+2. Apply z-score normalization
+3. Convert 3D MRI into 2D axial slices
+4. Remove empty slices
+5. Resize slices to 64x64
+6. Save processed slices as .npz files
+
+Dataset split:
+- Train = 80%
+- Validation = 10%
+- Test = 10%
+
+This prevents patient-level data leakage.
+"""
+
+
 from __future__ import annotations
 
 import argparse
@@ -36,9 +40,9 @@ def zscore_normalise(volume: np.ndarray) -> np.ndarray:
     brain = volume[volume > 0]
     if brain.size == 0:
         return volume.astype(np.float32)
-    mu, sigma = brain.mean(), brain.std() + 1e-8
-    out = (volume - mu) / sigma
-    out[volume <= 0] = 0.0
+    mu, sigma = brain.mean(), brain.std() + 1e-8 #Compute Mean and Standard Deviation
+    out = (volume - mu) / sigma #FORMULA OF Z-Score Normalization
+    out[volume <= 0] = 0.0 
     return out.astype(np.float32)
 
 
@@ -131,3 +135,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+

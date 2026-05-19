@@ -7,7 +7,7 @@ validation split; the best model so far is written to
 
 Run with::
 
-    python -m scripts.run_training --epochs 6 --batch-size 32
+    python -m scripts.run_training --epochs 100 --batch-size 32
 """
 from __future__ import annotations
 
@@ -48,7 +48,7 @@ def main():
     p = argparse.ArgumentParser(description="Train TinyUNet on ISLES 2D slices")
     p.add_argument("--data-root", default=str(here / "data_processed"))
     p.add_argument("--ckpt-dir", default=str(here / "checkpoints"))
-    p.add_argument("--epochs", type=int, default=6)
+    p.add_argument("--epochs", type=int, default=100)
     p.add_argument("--batch-size", type=int, default=32)
     p.add_argument("--lr", type=float, default=1e-3)
     p.add_argument("--num-workers", type=int, default=0)
