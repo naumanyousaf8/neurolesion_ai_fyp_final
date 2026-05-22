@@ -27,3 +27,9 @@ API_DESCRIPTION: str = (
     "AI-powered stroke lesion segmentation and reporting on diffusion-weighted MRI."
 )
 API_VERSION: str = "1.0.0"
+
+# Local Ollama LLM report generation (see backend.services.llm_report_service)
+OLLAMA_HOST: str = "http://localhost:11434"
+OLLAMA_MODEL: str = "gemma:2b"
+OLLAMA_TEMPERATURE: float = 0.2
+OLLAMA_TIMEOUT_SECONDS: float = 120.0

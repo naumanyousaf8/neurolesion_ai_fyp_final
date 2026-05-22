@@ -34,3 +34,24 @@ class LongitudinalRequest(BaseModel):
 
     case_id: str
     effectiveness: float = Field(ge=0.0, le=1.0)
+
+
+class LLMReportRequest(BaseModel):
+    """Body for ``POST /api/generate-llm-report``.
+
+    Supply either ``case_id`` (server builds metadata from the prediction cache
+    after ``/api/predict``) or an explicit ``metadata`` dict.
+    """
+
+    case_id: str | None = None
+    metadata: dict | None = None
+
+
+class LLMReportResponse(BaseModel):
+    """Structured LLM radiology report sections."""
+
+    findings: str
+    impression: str
+    recommendations: str
+    model: str
+    disclaimer: str

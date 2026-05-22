@@ -3,7 +3,7 @@ import { AlertOctagon, ArrowDown, Loader2 } from "lucide-react";
 import UploadZone from "../components/UploadZone.jsx";
 import ResultsPanel from "../components/ResultsPanel.jsx";
 import SliceViewer from "../components/SliceViewer.jsx";
-import ReportPanel from "../components/ReportPanel.jsx";
+import ReportGenerationPanel from "../components/ReportGenerationPanel.jsx";
 import LongitudinalPanel from "../components/LongitudinalPanel.jsx";
 import { predictByUpload, predictBySample } from "../lib/api.js";
 
@@ -83,7 +83,11 @@ export default function Analyzer() {
             suggestedSlice={result.suggested_slice}
           />
 
-          <ReportPanel report={result.report} caseLabel={result.case_label} />
+          <ReportGenerationPanel
+            caseId={result.case_id}
+            caseLabel={result.case_label}
+            templateSource={result.report}
+          />
 
           <LongitudinalPanel
             caseId={result.case_id}

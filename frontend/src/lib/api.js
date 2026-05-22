@@ -50,3 +50,60 @@ export async function fetchLongitudinalSlice(caseId, z, panel = "recovered") {
   });
   return data.data_url;
 }
+
+/** Human-readable message from FastAPI / axios errors. */
+export function formatApiError(error, fallback = "Request failed.") {
+  if (!error?.response) {
+    if (error?.code === "ECONNABORTED") {
+      return "Request timed out. For AI reports, ensure Ollama is running locally.";
+    }
+    return error?.message || fallback;
+  }
+
+  const { status, data } = error.response;
+  const detail = data?.detail;
+
+  if (typeof detail === "string") return detail;
+  if (Array.isArray(detail)) {
+    return detail.map((d) => d?.msg ?? JSON.stringify(d)).join("; ");
+  }
+
+  if (status === 504) {
+    return "AI report generation timed out. Retry or check Ollama performance.";
+  }
+  if (status === 503) {
+    return "Cannot reach Ollama. Start the local server and ensure gemma:2b is available.";
+  }
+  if (status === 404) {
+    return "Case not found. Run segmentation on this volume first.";
+  }
+  if (status === 502) {
+    return "AI report could not be structured. Please retry generation.";
+  }
+  if (status === 400) {
+    return "Missing metadata for report generation. Re-run analysis first.";
+  }
+
+  return fallback;
+}
+
+/** Generate structured LLM radiology report (Findings / Impression / Recommendations). */
+export async function generateLLMReport(caseId) {
+  const { data } = await api.post(
+    "/generate-llm-report",
+    { case_id: caseId },
+    { timeout: 130000 },
+  );
+  return data;
+}
+
+/** Download hospital-style PDF (template or ai). Returns a Blob. */
+export async function downloadReportPdf(caseId, reportType) {
+  const timeout = reportType === "ai" ? 150000 : 90000;
+  const { data } = await api.get("/download-report-pdf", {
+    params: { case_id: caseId, report_type: reportType },
+    responseType: "blob",
+    timeout,
+  });
+  return data;
+}

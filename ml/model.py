@@ -1,12 +1,14 @@
-"""Compact 2D U-Net architecture optimised for CPU-friendly stroke segmentation.
-
-The network has the canonical U-Net shape (encoder + bottleneck + decoder
-with skip connections) but is intentionally small (~250 K parameters at
-``base=16``) so the entire model fits in cache and trains in tens of
-minutes on a laptop CPU. The compactness trades a small amount of voxel
-recall for an enormous gain in iteration speed - exactly the right
-balance for an FYP prototype.
 """
+TinyUNet:
+A lightweight 2D U-Net architecture for stroke lesion segmentation.
+
+Designed for:
+- CPU-friendly training
+- Fast inference
+- Low memory usage
+- FYP-scale deployment
+"""
+
 from __future__ import annotations
 
 import torch
@@ -32,22 +34,20 @@ class DoubleConv(nn.Module):
 
 
 class TinyUNet(nn.Module):
-    """U-Net with channel widths ``[base, 2*base, 4*base, 8*base]``.
+    """
+    Lightweight U-Net for medical image segmentation.
 
-    At ``base=16`` the network has ~250 K trainable parameters - small
-    enough to train end-to-end on a laptop CPU in under 20 minutes on the
-    250-volume ISLES 2022 dataset.
+    Architecture:
+    - Encoder
+    - Bottleneck
+    - Decoder
+    - Skip Connections
 
-    Parameters
-    ----------
-    in_channels:
-        Number of input channels. ``1`` for single-modality DWI.
-    out_channels:
-        Number of segmentation classes (logits before sigmoid). ``1`` for
-        binary stroke vs. background.
-    base:
-        Width of the first encoder block. Channel counts double at each
-        deeper level.
+    Input:
+    (1, 64, 64)
+
+    Output:
+    Segmentation mask logits
     """
 
     def __init__(self, in_channels: int = 1, out_channels: int = 1, base: int = 16):

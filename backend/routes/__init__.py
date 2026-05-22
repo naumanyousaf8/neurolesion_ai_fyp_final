@@ -8,6 +8,8 @@ from __future__ import annotations
 from fastapi import APIRouter
 
 from backend.routes.health import router as health_router
+from backend.routes.llm_report import router as llm_report_router
+from backend.routes.pdf_report import router as pdf_report_router
 from backend.routes.longitudinal import router as longitudinal_router
 from backend.routes.predict import router as predict_router
 from backend.routes.samples import router as samples_router
@@ -21,5 +23,7 @@ api_router.include_router(samples_router)
 api_router.include_router(predict_router)
 api_router.include_router(slice_router)
 api_router.include_router(longitudinal_router)
+api_router.include_router(llm_report_router)
+api_router.include_router(pdf_report_router)
 
 __all__ = ["api_router"]
